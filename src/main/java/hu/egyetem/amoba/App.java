@@ -1,13 +1,10 @@
 package hu.egyetem.amoba;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+import hu.egyetem.amoba.game.Game;
+
+public class App {
+    public static void main(String[] args) {
+        Game game = new Game(10, 10);
+        game.start();
     }
 }
