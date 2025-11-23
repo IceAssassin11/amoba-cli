@@ -1,5 +1,10 @@
 package hu.egyetem.amoba.game;
 
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Game {
     private final Board board;
     private final Player human;
@@ -16,11 +21,87 @@ public class Game {
         int midCol = board.getCols() / 2;
         board.placeMove(new Move(midRow, midCol), human);
 
-        System.out.println("Welcome to Amőba!");
+        System.out.println("Üdvözöllek az Amőba játékban!");
         board.printBoard();
+
+        while (true) {
+            Move humanMove = null;
+            do {
+                humanMove = readUserMove(board.getCols(), board.getRows());
+                if (!board.isValidMove(humanMove, human)) {
+                    System.out.println("Érvénytelen lépés! Csak a saját jeledhez szomszédos mezőre léphetsz.");
+                    humanMove = null;
+                }
+            } while (humanMove == null);
+
+            board.placeMove(humanMove, human);
+            board.printBoard();
+
+            Move aiMove = getRandomAIMove();
+            if (aiMove != null) {
+                System.out.println("A gép lép: " + (char) ('a' + aiMove.getCol()) + (aiMove.getRow() + 1));
+                board.placeMove(aiMove, ai);
+                board.printBoard();
+            } else {
+                System.out.println("A gép nem talál lépést. Játék vége.");
+                break;
+            }
+
+        }
     }
-    
-    public Player getAi() {
-    return ai;
+
+    public Move getRandomAIMove() {
+        List<Move> validMoves = new ArrayList<>();
+
+        for (int r = 0; r < board.getRows(); r++) {
+            for (int c = 0; c < board.getCols(); c++) {
+                Move move = new Move(r, c);
+                if (board.isValidMove(move, ai)) {
+                    validMoves.add(move);
+                }
+            }
+        }
+
+        if (validMoves.isEmpty())
+            return null;
+
+        Random rand = new Random();
+        return validMoves.get(rand.nextInt(validMoves.size()));
+    }
+
+    private Move readUserMove(int cols, int rows) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("Add meg a lépést (például: a1): ");
+            String input = scanner.nextLine().trim().toLowerCase();
+
+            // pl. "a1" → col = 0, row = 0
+            if (input.length() < 2) {
+                System.out.println("Hibás formátum! Példa: a1");
+                continue;
+            }
+
+            char colChar = input.charAt(0);
+            String rowPart = input.substring(1);
+
+            int col = colChar - 'a';
+
+            int row;
+
+            try {
+                row = Integer.parseInt(rowPart) - 1;
+            } catch (NumberFormatException e) {
+                System.out.println("Hibás formátum! Példa: a1");
+                continue;
+            }
+
+            if (col < 0 || col >= cols || row < 0 || row >= rows) {
+                System.out.println("A megadott mező kívül esik a táblán.");
+                continue;
+            }
+
+            return new Move(row, col);
+        }
     }
 }

@@ -22,8 +22,10 @@ public class Board {
         int r = move.getRow();
         int c = move.getCol();
 
-        if (r < 0 || r >= rows || c < 0 || c >= cols) return false;
-        if (cells[r][c] != EMPTY) return false;
+        if (r < 0 || r >= rows || c < 0 || c >= cols)
+            return false;
+        if (cells[r][c] != EMPTY)
+            return false;
 
         cells[r][c] = player.getSymbol();
         return true;
@@ -32,12 +34,12 @@ public class Board {
     public void printBoard() {
         System.out.print("  ");
         for (int c = 0; c < cols; c++) {
-            System.out.print((char)('a' + c) + " ");
+            System.out.print((char) ('a' + c) + " ");
         }
         System.out.println();
 
         for (int r = 0; r < rows; r++) {
-            System.out.print((r+1) + " ");
+            System.out.print((r + 1) + " ");
             for (int c = 0; c < cols; c++) {
                 System.out.print(cells[r][c] + " ");
             }
@@ -46,10 +48,49 @@ public class Board {
     }
 
     public int getRows() {
-    return rows;
+        return rows;
     }
 
     public int getCols() {
-    return cols;
+        return cols;
+    }
+
+    public boolean isValidMove(Move move, Player player) {
+        int r = move.getRow();
+        int c = move.getCol();
+
+        if (cells[r][c] != EMPTY)
+            return false;
+
+        boolean hasAnyMove = false;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (cells[i][j] != EMPTY) {
+                    hasAnyMove = true;
+                    break;
+                }
+            }
+            if (hasAnyMove)
+                break;
+        }
+
+        if (!hasAnyMove)
+            return true;
+
+        for (int dr = -1; dr <= 1; dr++) {
+            for (int dc = -1; dc <= 1; dc++) {
+                if (dr == 0 && dc == 0)
+                    continue;
+                int nr = r + dr;
+                int nc = c + dc;
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                    if (cells[nr][nc] != EMPTY) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
