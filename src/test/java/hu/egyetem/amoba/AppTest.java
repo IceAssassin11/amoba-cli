@@ -1,20 +1,18 @@
 package hu.egyetem.amoba;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-{
-    /**
-     * Rigorous Test :-)
-     */
+public class AppTest {
+
     @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
+    public void mainRunsWithoutException() {
+        try {
+            String[] args = {};
+            App.main(args);
+        } catch (Exception e) {
+            fail("Az Amőba játék futás közben hibába botlott: " + e.getMessage());
+        }
     }
 }
