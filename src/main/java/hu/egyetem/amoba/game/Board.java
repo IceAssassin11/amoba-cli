@@ -93,4 +93,65 @@ public class Board {
 
         return false;
     }
+
+    public boolean checkWin(Player player) {
+        char sym = player.getSymbol();
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c <= cols - 5; c++) {
+                if (cells[r][c] == sym &&
+                        cells[r][c + 1] == sym &&
+                        cells[r][c + 2] == sym &&
+                        cells[r][c + 3] == sym &&
+                        cells[r][c + 4] == sym)
+                    return true;
+            }
+        }
+
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r <= rows - 5; r++) {
+                if (cells[r][c] == sym &&
+                        cells[r + 1][c] == sym &&
+                        cells[r + 2][c] == sym &&
+                        cells[r + 3][c] == sym &&
+                        cells[r + 4][c] == sym)
+                    return true;
+            }
+        }
+
+        for (int r = 0; r <= rows - 5; r++) {
+            for (int c = 0; c <= cols - 5; c++) {
+                if (cells[r][c] == sym &&
+                        cells[r + 1][c + 1] == sym &&
+                        cells[r + 2][c + 2] == sym &&
+                        cells[r + 3][c + 3] == sym &&
+                        cells[r + 4][c + 4] == sym)
+                    return true;
+            }
+        }
+
+        for (int r = 0; r <= rows - 5; r++) {
+            for (int c = 4; c < cols; c++) {
+                if (cells[r][c] == sym &&
+                        cells[r + 1][c - 1] == sym &&
+                        cells[r + 2][c - 2] == sym &&
+                        cells[r + 3][c - 3] == sym &&
+                        cells[r + 4][c - 4] == sym)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isFull() {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (cells[r][c] == EMPTY) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

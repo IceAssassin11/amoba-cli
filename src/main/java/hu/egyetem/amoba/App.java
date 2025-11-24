@@ -1,14 +1,17 @@
 package hu.egyetem.amoba;
 
 import hu.egyetem.amoba.game.Game;
+import hu.egyetem.amoba.game.GameResult;
 import hu.egyetem.amoba.game.Move;
 import hu.egyetem.amoba.game.Player;
 import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        Game game = new Game(10, 10);
-        game.start();
+        Game game = new Game(5, 5);
+        GameResult result = game.start();
+
+        System.out.println("Játék vége: " + result);
     }
 
     public static Move readUserMove(int cols, int rows) {

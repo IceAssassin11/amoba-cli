@@ -16,7 +16,7 @@ public class Game {
         ai = new Player("Computer", 'o');
     }
 
-    public void start() {
+    public GameResult start() {
         int midRow = board.getRows() / 2;
         int midCol = board.getCols() / 2;
         board.placeMove(new Move(midRow, midCol), human);
@@ -29,7 +29,7 @@ public class Game {
             do {
                 humanMove = readUserMove(board.getCols(), board.getRows());
                 if (!board.isValidMove(humanMove, human)) {
-                    System.out.println("Érvénytelen lépés! Csak a saját jeledhez szomszédos mezőre léphetsz.");
+                    System.out.println("Érvénytelen lépés!");
                     humanMove = null;
                 }
             } while (humanMove == null);
@@ -37,16 +37,37 @@ public class Game {
             board.placeMove(humanMove, human);
             board.printBoard();
 
-            Move aiMove = getRandomAIMove();
-            if (aiMove != null) {
-                System.out.println("A gép lép: " + (char) ('a' + aiMove.getCol()) + (aiMove.getRow() + 1));
-                board.placeMove(aiMove, ai);
-                board.printBoard();
-            } else {
-                System.out.println("A gép nem talál lépést. Játék vége.");
-                break;
+            if (board.checkWin(human)) {
+                System.out.println(human.getName() + " nyert!");
+                return GameResult.HUMAN_WIN;
             }
 
+            if (board.isFull()) {
+                System.out.println("Nincs több üres mező - döntetlen!");
+                return GameResult.DRAW;
+            }
+
+            Move aiMove = getRandomAIMove();
+            if (aiMove == null) {
+                System.out.println("Nincs több lépés - döntetlen!");
+                return GameResult.DRAW;
+            }
+
+            System.out.println("A gép lép: "
+                    + (char) ('a' + aiMove.getCol()) + (aiMove.getRow() + 1));
+            board.placeMove(aiMove, ai);
+
+            board.printBoard();
+
+            if (board.checkWin(ai)) {
+                System.out.println("A gép nyert!");
+                return GameResult.AI_WIN;
+            }
+
+            if (board.isFull()) {
+                System.out.println("Nincs több üres mező - döntetlen!");
+                return GameResult.DRAW;
+            }
         }
     }
 
@@ -76,7 +97,6 @@ public class Game {
             System.out.print("Add meg a lépést (például: a1): ");
             String input = scanner.nextLine().trim().toLowerCase();
 
-            // pl. "a1" → col = 0, row = 0
             if (input.length() < 2) {
                 System.out.println("Hibás formátum! Példa: a1");
                 continue;
