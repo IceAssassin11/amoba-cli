@@ -1,6 +1,9 @@
 package hu.egyetem.amoba.game;
 
 import java.util.Scanner;
+
+import hu.egyetem.amoba.io.FileManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,11 +12,13 @@ public class Game {
     private final Board board;
     private final Player human;
     private final Player ai;
+    private final Scanner scanner;
 
-    public Game(int rows, int cols) {
-        board = new Board(rows, cols);
-        human = new Player("Human", 'x');
-        ai = new Player("Computer", 'o');
+    public Game(Board board, Player human, Player ai, Scanner scanner) {
+        this.board = board;
+        this.human = human;
+        this.ai = ai;
+        this.scanner = scanner;
     }
 
     public GameResult start() {
@@ -71,6 +76,8 @@ public class Game {
         }
     }
 
+    private final Random random = new Random();
+
     public Move getRandomAIMove() {
         List<Move> validMoves = new ArrayList<>();
 
@@ -86,16 +93,26 @@ public class Game {
         if (validMoves.isEmpty())
             return null;
 
-        Random rand = new Random();
-        return validMoves.get(rand.nextInt(validMoves.size()));
+        return validMoves.get(random.nextInt(validMoves.size()));
     }
 
     private Move readUserMove(int cols, int rows) {
-        Scanner scanner = new Scanner(System.in);
-
         while (true) {
-            System.out.print("Add meg a lépést (például: a1): ");
+            System.out.print("Add meg a lépést (pl. a1) vagy parancsot ('save', 'exit'): ");
             String input = scanner.nextLine().trim().toLowerCase();
+
+            if (input.equals("save")) {
+                System.out.print("Add meg a mentés fájl nevét: ");
+                String filename = scanner.nextLine();
+                FileManager.saveBoardToFile(filename, board);
+                System.out.println("Játék elmentve!");
+                continue;
+            }
+
+            if (input.equals("exit")) {
+                System.out.println("Kiléptél a játékból.");
+                System.exit(0);
+            }
 
             if (input.length() < 2) {
                 System.out.println("Hibás formátum! Példa: a1");
@@ -108,7 +125,6 @@ public class Game {
             int col = colChar - 'a';
 
             int row;
-
             try {
                 row = Integer.parseInt(rowPart) - 1;
             } catch (NumberFormatException e) {

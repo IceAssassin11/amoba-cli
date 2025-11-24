@@ -154,4 +154,12 @@ public class Board {
         }
         return true;
     }
+
+    public char getCell(int r, int c) {
+        return cells[r][c];
+    }
+
+    public void setCell(int r, int c, char ch) {
+        cells[r][c] = ch;
+    }
 }
